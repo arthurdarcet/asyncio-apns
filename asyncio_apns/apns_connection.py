@@ -1,6 +1,6 @@
 import asyncio
 import json
-from typing import Union
+from typing import Union, Optional
 from .errors import APNsError, APNsDisconnectError
 from .h2_client import H2ClientProtocol, HTTP2Error, HTTPMethod, DisconnectError
 from .payload import Payload
@@ -11,7 +11,7 @@ DEVELOPMENT_SERVER_ADDR = "api.development.push.apple.com"
 
 
 @asyncio.coroutine
-def connect(cert_file: str, key_file: str, *, development=False, loop=None):
+def connect(cert_file: str, key_file: Optional[str]=None, *, development=False, loop=None):
     connection = APNsConnection(cert_file, key_file, development=development, loop=loop)
     yield from connection.connect()
     return connection
@@ -22,7 +22,7 @@ def _get_apns_id(headers: dict):
 
 
 class APNsConnection:
-    def __init__(self, cert_file: str, key_file: str, *, development=False, loop=None):
+    def __init__(self, cert_file: str, key_file: Optional[str]=None, *, development=False, loop=None):
         self.protocol = None
         self.cert_file = cert_file
         self.key_file = key_file
